@@ -143,7 +143,7 @@
                     <navigationItem key="navigationItem" id="hBN-1J-NGt"/>
                     <connections>
                         <outlet property="mapView" destination="hix-wy-5Bw" id="NUL-f5-zDO"/>
-                        <segue destination="CqC-D1-NM3" kind="presentation" identifier="segueDetailViewController" id="hef-6P-tTK"/>
+                        <segue destination="CqC-D1-NM3" kind="presentation" identifier="segueDetailViewController" modalTransitionStyle="crossDissolve" id="hef-6P-tTK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Kl3-gD-X0x" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -164,15 +164,41 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Wj6-0x-Jxy">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <rect key="frame" x="16" y="36" width="343" height="170"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="170" id="WWg-JD-gR3"/>
+                                </constraints>
                             </mapView>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="boL-Xc-BED">
+                                <rect key="frame" x="0.0" y="211" width="375" height="456"/>
+                                <color key="backgroundColor" red="1" green="0.67514110039999997" blue="0.34005021759999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="DXB-on-AaD">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="r2i-MB-h5j">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="Wj6-0x-Jxy" firstAttribute="leading" secondItem="4L8-Fv-r4X" secondAttribute="leading" id="Bpc-Bs-3KJ"/>
-                            <constraint firstItem="4L8-Fv-r4X" firstAttribute="trailing" secondItem="Wj6-0x-Jxy" secondAttribute="trailing" id="OYC-UL-TfN"/>
-                            <constraint firstItem="Wj6-0x-Jxy" firstAttribute="top" secondItem="4L8-Fv-r4X" secondAttribute="top" id="YNs-aM-DIp"/>
-                            <constraint firstItem="4L8-Fv-r4X" firstAttribute="bottom" secondItem="Wj6-0x-Jxy" secondAttribute="bottom" id="qXB-ja-Tl8"/>
+                            <constraint firstItem="boL-Xc-BED" firstAttribute="leading" secondItem="i2n-rk-xeu" secondAttribute="leading" id="Aqk-yc-48C"/>
+                            <constraint firstItem="Wj6-0x-Jxy" firstAttribute="top" secondItem="4L8-Fv-r4X" secondAttribute="top" constant="16" id="EBU-zP-yDG"/>
+                            <constraint firstItem="boL-Xc-BED" firstAttribute="top" secondItem="Wj6-0x-Jxy" secondAttribute="bottom" constant="5" id="GQT-eM-aAp"/>
+                            <constraint firstAttribute="bottom" secondItem="boL-Xc-BED" secondAttribute="bottom" id="L2U-1y-k4J"/>
+                            <constraint firstItem="boL-Xc-BED" firstAttribute="centerX" secondItem="Wj6-0x-Jxy" secondAttribute="centerX" id="Uid-NC-k8Y"/>
+                            <constraint firstItem="Wj6-0x-Jxy" firstAttribute="leading" secondItem="4L8-Fv-r4X" secondAttribute="leading" constant="16" id="ZaW-bX-bLx"/>
+                            <constraint firstItem="4L8-Fv-r4X" firstAttribute="trailing" secondItem="Wj6-0x-Jxy" secondAttribute="trailing" constant="16" id="gtz-6r-5PB"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="4L8-Fv-r4X"/>
                     </view>
@@ -218,6 +244,7 @@
                     <nil name="viewControllers"/>
                     <connections>
                         <segue destination="VsO-eG-RGw" kind="relationship" relationship="rootViewController" id="mK7-an-ffc"/>
+                        <segue destination="VsO-eG-RGw" kind="show" animates="NO" id="D4r-vB-F3t"/>
                     </connections>
                 </navigationController>
             </objects>
@@ -227,4 +254,7 @@
     <resources>
         <image name="earth" width="1100" height="500"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="D4r-vB-F3t"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -8,50 +8,90 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class MapViewController: UIViewController {
 
+    static let segueDetailViewController = "segueDetailViewController"
+    static let kSortDescriptorKey = "name"
+    
     @IBOutlet weak var mapView: MKMapView!
     let locationManager = CLLocationManager()
-    
+    var dataController:DataController!
+  
+    var pins:[Pin] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.mapView.delegate = self
-        
-        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
-            self.mapView.showsUserLocation = true
-        } else {
-            locationManager.requestWhenInUseAuthorization()
-        }
-        
-        
-        
-        // Do any additional setup after loading the view, typically from a nib.
-        locationManager.delegate = self
+        setup()
+    }
+    
+    fileprivate func setup() {
+        loadInitialPosition()
         mapView.delegate = self
         mapView.showsUserLocation = true
+        self.loadPins()
+        
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse{
             locationManager.startUpdatingLocation()
             locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+            mapView.showsUserLocation = true
         }else{
             locationManager.requestWhenInUseAuthorization()
         }
-       
-        // Do any additional setup after loading the view.
     }
     
-
+    func loadInitialPosition() {
+        if let locationDictionary = UserDefaults.standard.value(forKey: Constants.LocationData.location) as? NSDictionary {
+            
+            let center = CLLocationCoordinate2D(
+                latitude: locationDictionary.value(forKey: Constants.LocationData.latitude) as! CLLocationDegrees,
+                longitude: locationDictionary.value(forKey: Constants.LocationData.longitude) as! CLLocationDegrees)
+            
+            let span = MKCoordinateSpan(
+                latitudeDelta: locationDictionary.value(forKey: Constants.LocationData.latitudeDelta) as! CLLocationDegrees,
+                longitudeDelta: locationDictionary.value(forKey: Constants.LocationData.longitudeDelta) as! CLLocationDegrees)
+            
+            mapView.region.span = span
+            mapView.region.center = center
+            
+        }
+    }
     
+    func loadPins() {
+        let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
+        
+        let sortDescriptor = NSSortDescriptor(key: MapViewController.kSortDescriptorKey, ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        if let result = try? dataController.viewContext.fetch(fetchRequest) {
+            pins = result
+        }
+        
+        for pin in pins {
+            let annotation = MKPointAnnotation()
+            let coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
+            annotation.coordinate = coordinate
+            self.mapView.addAnnotation(annotation)
+        }
+    }
     
     @IBAction func addNewLocation(_ sender: UILongPressGestureRecognizer) {
         
         if sender.state != .began {
             return
         }
+        
         let locationScreen  = sender.location(in: self.mapView)
         let coordinate = self.mapView.convert(locationScreen, toCoordinateFrom: self.mapView)
         
+        let pin:Pin = Pin(context: dataController.viewContext)
+        pin.latitude = coordinate.latitude
+        pin.longitude = coordinate.longitude
+        
+        try? dataController.viewContext.save()
+        
+        pins.insert(pin, at: 0)
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
 
@@ -60,38 +100,46 @@ class MapViewController: UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if (segue.identifier == "segueDetailViewController") {
-            if let navigation = segue.destination as? UINavigationController {
-                if let detail = navigation.viewControllers.first as? DetailViewController {
-                    detail.modalTransitionStyle = .crossDissolve
-                    if let annotation = sender as? MKAnnotation {
-                        detail.annotation = annotation
-                    }
-                    
-                }
+    
+        if (segue.identifier == MapViewController.segueDetailViewController) {
+            let navigation = segue.destination as! UINavigationController
+            let detail = navigation.viewControllers.first as! PhotoAlbumViewController
+            detail.modalTransitionStyle = .crossDissolve
+            detail.dataController = self.dataController
+            if let selectedPin = sender as? Pin {
+                detail.selectedPin = selectedPin
             }
+            
         }
     }
+    
+    
 }
 
-
+// MARK: - MKMapViewDelegate
 extension MapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        let aleert = UIAlertController.init(title: "", message: "", preferredStyle: .alert);
-        let actionOK = UIAlertAction.init(title: "", style: .cancel, handler: nil)
-        aleert.addAction(actionOK)
-       // self.present(aleert, animated: true, completion: nil)
-        self.performSegue(withIdentifier: "segueDetailViewController", sender: view.annotation)
+        for pin in pins {
+            let pinCoordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
+            if pinCoordinate == view.annotation?.coordinate {
+                self.performSegue(withIdentifier: MapViewController.segueDetailViewController, sender: pin)
+            }
+        }
     }
     
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        VirtualTouristService.sharedInstance().updateUserLocation(mapView: mapView)
+    }
     
 }
 
-extension MapViewController: CLLocationManagerDelegate {
- 
-    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-        mapView .setCenter(userLocation.coordinate, animated: true)
+// MARK: - CLLocationCoordinate2D extension to compare coordinate
+extension CLLocationCoordinate2D: Equatable {
+    
+    static public func ==(firstLocation: CLLocationCoordinate2D, secondLocation: CLLocationCoordinate2D) -> Bool {
+        return (firstLocation.latitude == secondLocation.latitude && firstLocation.longitude == secondLocation.longitude)
     }
 }
+
 

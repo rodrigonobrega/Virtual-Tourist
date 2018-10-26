@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Yc3-nw-RHn">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Oc8-v4-IHP">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -71,6 +72,55 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pfD-Vl-FDA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1154" y="375"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="ul6-HX-5u9">
+            <objects>
+                <viewController id="Oc8-v4-IHP" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="aXX-Pw-1Ke">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="txJ-I9-VMN">
+                                <rect key="frame" x="125.5" y="305" width="124.5" height="57"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Virtual" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DGQ-Tk-8Un">
+                                        <rect key="frame" x="8" y="0.0" width="53.5" height="57"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Tourist" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EZa-Pl-Xz3">
+                                        <rect key="frame" x="69.5" y="0.0" width="47" height="57"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="EZa-Pl-Xz3" secondAttribute="trailing" constant="8" id="7GZ-tL-ZoG"/>
+                                    <constraint firstAttribute="bottom" secondItem="EZa-Pl-Xz3" secondAttribute="bottom" id="AK3-2b-68f"/>
+                                    <constraint firstAttribute="height" constant="57" id="MHo-Lz-TCR"/>
+                                    <constraint firstItem="EZa-Pl-Xz3" firstAttribute="top" secondItem="txJ-I9-VMN" secondAttribute="top" id="TzE-5K-9dA"/>
+                                    <constraint firstItem="DGQ-Tk-8Un" firstAttribute="top" secondItem="txJ-I9-VMN" secondAttribute="top" id="bm7-6x-gTl"/>
+                                    <constraint firstItem="EZa-Pl-Xz3" firstAttribute="leading" secondItem="DGQ-Tk-8Un" secondAttribute="trailing" constant="8" id="boA-XT-9pG"/>
+                                    <constraint firstAttribute="bottom" secondItem="DGQ-Tk-8Un" secondAttribute="bottom" id="qZ9-Jw-BPs"/>
+                                    <constraint firstItem="DGQ-Tk-8Un" firstAttribute="leading" secondItem="txJ-I9-VMN" secondAttribute="leading" constant="8" id="tF1-9D-5Dq"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="txJ-I9-VMN" firstAttribute="centerX" secondItem="aXX-Pw-1Ke" secondAttribute="centerX" id="7b4-h0-GAP"/>
+                            <constraint firstItem="txJ-I9-VMN" firstAttribute="centerY" secondItem="aXX-Pw-1Ke" secondAttribute="centerY" id="Dfb-Ez-NbY"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="5O4-0U-evD"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5fb-J9-O1c" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2412" y="375"/>
         </scene>
     </scenes>
 </document>

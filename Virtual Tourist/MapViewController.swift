@@ -77,7 +77,15 @@ class MapViewController: UIViewController {
     }
     
     @IBAction func addNewLocation(_ sender: UILongPressGestureRecognizer) {
-        
+        if (Constants.FlickrParameterValues.APIKey == "") {
+            
+            let alert = UIAlertController(title: "Virtual Tourist", message: Constants.ErrorMessage.APINotDefined, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "ok", style: .default, handler: nil)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+            
+            return
+        }
         if sender.state != .began {
             return
         }

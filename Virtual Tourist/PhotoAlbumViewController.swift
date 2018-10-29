@@ -161,14 +161,6 @@ extension PhotoAlbumViewController {
                             photo.setValue(data, forKey: "binaryPhoto")
                             try? self.dataController.viewContext.save()
                         }
-//                        DataController.shared.viewContext.perform {
-//                            product.setValue("Mike", forKey: "name")
-//                            try? DataController.shared.viewContext.save()
-//                        }
-//                        DispatchQueue.main.async {
-//                            photo.binaryPhoto = data
-//                            try? self.dataController.viewContext.save()
-//                        }
                     }
                     
                 }
@@ -186,6 +178,8 @@ extension PhotoAlbumViewController {
         loadImagesFromFlickr()
     }
     
+    
+    
     fileprivate func loadImagesFromFlickr() {
         let coordinate = CLLocationCoordinate2D(latitude: selectedPin.latitude, longitude: selectedPin.longitude)
         
@@ -193,18 +187,7 @@ extension PhotoAlbumViewController {
         service.loadPhotosFromCoordinate(coordinate) { (success, message, photoArray) in
             if success {
                 if let photoArray = photoArray {
-                    for photo in photoArray {
-                        let newPhoto = Photo(context: self.dataController.viewContext)
-                        newPhoto.url_m = photo["url_m"] as? String
-                        newPhoto.pin = self.selectedPin
-                        do {
-                            try self.dataController.viewContext.save()
-                        } catch {
-                            fatalError("Failed create Photo")
-                        }
-                    }
-                    self.downloadImages()
-                    
+                    self.createPinPhotosFromArray(photoArray)
                 }
             } else {
                 if let message = message {
@@ -214,5 +197,18 @@ extension PhotoAlbumViewController {
         };
     }
     
+    fileprivate func createPinPhotosFromArray(_ photoArray: [[String : AnyObject]]) {
+        for photo in photoArray {
+            let newPhoto = Photo(context: self.dataController.viewContext)
+            newPhoto.url_m = photo["url_m"] as? String
+            newPhoto.pin = self.selectedPin
+            do {
+                try self.dataController.viewContext.save()
+            } catch {
+                fatalError("Failed create Photo")
+            }
+        }
+        self.downloadImages()
+    }
     
 }

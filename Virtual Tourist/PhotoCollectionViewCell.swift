@@ -13,7 +13,6 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var photoImage: UIImageView!
     @IBOutlet weak var downloadActivity: UIActivityIndicatorView!
     
-    
     func updateCellWithPhoto(_ photo: Photo) {
         if let binaryPhoto = photo.binaryPhoto {
             DispatchQueue.main.async {

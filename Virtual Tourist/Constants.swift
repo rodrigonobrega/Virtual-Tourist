@@ -33,9 +33,9 @@ struct Constants {
     
     // MARK: Flickr Parameter Values
     struct FlickrParameterValues {
-        static let APIKey = "80ba3694278d1449c82db675f4fcb766"
+        static let APIKey = ""
         static let ResponseFormat = "json"
-        static let DisableJSONCallback = "1" /* 1 means "yes" */
+        static let DisableJSONCallback = "1"
         static let GalleryPhotosMethod = "flickr.galleries.getPhotos"
         static let GalleryID = "5704-72157622566655097"
         static let MediumURL = "url_m"
@@ -67,7 +67,9 @@ struct Constants {
         static let longitude = "longitude"
     }
     
+    // Mark: Error messages
     struct ErrorMessage {
+        static let APINotDefined = "Please inform your API Key in Constants File before init"
         static let errorDescription = "Error Description :"
         static let TrySometime = "Please try again in sometime"
         static let DataNotFound = "Data not found, please try again in sometime"

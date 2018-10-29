@@ -16,7 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var showErrorDescription:Bool = true
     private static let segueDetailViewController = "segueDetailViewController"
     private static let modelName = "Virtual_Tourist"
-    private static let errorDescription = "Error Description :"
     
     var dataController = DataController(modelName: AppDelegate.modelName)
 
@@ -55,11 +54,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func printErrorDescription(error: Error?) {
         if showErrorDescription {
             if let error = error as NSError? {
-                print("\(AppDelegate.errorDescription) \(error), \(error.userInfo)")
+                print("\(Constants.ErrorMessage.errorDescription) \(error), \(error.userInfo)")
             }
         }
     }
     
-
 }
-

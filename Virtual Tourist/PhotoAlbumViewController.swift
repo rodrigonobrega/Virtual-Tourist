@@ -19,7 +19,19 @@ class PhotoAlbumViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var fetchedResultsController:NSFetchedResultsController<Photo>!
+    lazy var fetchedResultsController: NSFetchedResultsController<Photo> = {
+        
+        let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
+        let sortDescriptor = NSSortDescriptor(key: "title", ascending: false)
+        fetchRequest.predicate = NSPredicate(format: "pin = %@", self.selectedPin)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        fetchedResultsController.delegate = self
+        
+        return fetchedResultsController
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,13 +40,16 @@ class PhotoAlbumViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        fetchedResultsController = nil
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appDelegate.saveViewContext()
     }
     
     fileprivate func setup() {
-        setupFetchedResultsController()
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError(error.localizedDescription)
+        }
         if fetchedResultsController.fetchedObjects?.count == 0 {        
             loadImagesFromFlickr()
         }
@@ -83,7 +98,7 @@ extension PhotoAlbumViewController: UICollectionViewDelegate, UICollectionViewDa
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! PhotoCollectionViewCell
         let photo = fetchedResultsController.object(at: indexPath)
         
@@ -106,25 +121,6 @@ extension PhotoAlbumViewController: UICollectionViewDelegate, UICollectionViewDa
 // MARK: - NSFetchedResultsControllerDelegate
 extension PhotoAlbumViewController : NSFetchedResultsControllerDelegate {
     
-    fileprivate func setupFetchedResultsController() {
-        
-        let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "title", ascending: false)
-        fetchRequest.predicate = NSPredicate(format: "pin = %@", self.selectedPin)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-        
-        fetchedResultsController.delegate = self
-        
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            fatalError(error.localizedDescription)
-        }
-        
-    }
-    
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
         collectionView.performBatchUpdates({
@@ -133,18 +129,28 @@ extension PhotoAlbumViewController : NSFetchedResultsControllerDelegate {
             case .insert:
                 collectionView.insertItems(at: [newIndexPath!])
             case .update:
-                print("update")
                 collectionView.reloadItems(at: [indexPath!])
             case .delete:
                 collectionView.deleteItems(at: [indexPath!])
             default:
-                print("default")
                 break
             }
-//        print("type \(type)")
         }) { (success) in
             self.collectionView.isUserInteractionEnabled = true
-            self.collectionView.reloadData()
+            var downloadComplete = false
+            if let photos = self.fetchedResultsController.fetchedObjects {
+                for photo in photos {
+                    if (photo.binaryPhoto == nil) {
+                        downloadComplete = false
+                        break;
+                    } else {
+                        downloadComplete = true
+                    }
+                }
+            }
+            if downloadComplete {
+                self.collectionView.reloadData()
+            }
         }
         
     }
@@ -154,31 +160,22 @@ extension PhotoAlbumViewController : NSFetchedResultsControllerDelegate {
 extension PhotoAlbumViewController {
     
     func downloadImages() {
-        
-        if let photos = self.fetchedResultsController!.fetchedObjects {
-            
+        if let photos = self.fetchedResultsController.fetchedObjects {
             let service = VirtualTouristService.sharedInstance()
-            for photo in photos {
-                service.downloadImageFromPhoto(photo)
-            }
+            service.downloadImageFromPhotos(photos, dataController: self.dataController)
         }
     }
     
     @objc fileprivate func reloadImageRandom() {
-        if let photos = fetchedResultsController!.fetchedObjects {
+        
+        if let photos = fetchedResultsController.fetchedObjects {
             for photo in photos {
                 dataController.viewContext.delete(photo)
-                do {
-                    try dataController.viewContext.save()
-                } catch {
-                    print("eeeeerrrroooooo")
-                }
+                try? dataController.viewContext.save()                
             }
         }
         loadImagesFromFlickr()
     }
-    
-    
     
     fileprivate func loadImagesFromFlickr() {
         let coordinate = CLLocationCoordinate2D(latitude: selectedPin.latitude, longitude: selectedPin.longitude)
@@ -199,6 +196,8 @@ extension PhotoAlbumViewController {
     
     fileprivate func createPinPhotosFromArray(_ photoArray: [[String : AnyObject]]) {
         for photo in photoArray {
+            
+            
             let newPhoto = Photo(context: self.dataController.viewContext)
             newPhoto.url_m = photo["url_m"] as? String
             newPhoto.pin = self.selectedPin

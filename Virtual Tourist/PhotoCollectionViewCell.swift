@@ -14,16 +14,15 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var downloadActivity: UIActivityIndicatorView!
     
     func updateCellWithPhoto(_ photo: Photo) {
-        if let binaryPhoto = photo.binaryPhoto {
-            DispatchQueue.main.async {
+         DispatchQueue.main.async {
+            if photo.binaryPhoto != nil {
                 self.downloadActivity.stopAnimating()
-                self.photoImage.image = UIImage(data: binaryPhoto)
-            }
-        } else {
-            DispatchQueue.main.async {
+                self.photoImage.image = UIImage(data: photo.binaryPhoto!)
+            } else {
                 self.downloadActivity.startAnimating()
                 self.photoImage.image = nil
             }
+            
         }
     }
     

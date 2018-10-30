@@ -36,7 +36,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Virtual Tourist/PhotoCollectionViewCell.swift"
-            timestampString = "562540952.659886"
+            timestampString = "562566361.843116"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3"
@@ -90,6 +90,22 @@
             startingLineNumber = "85"
             endingLineNumber = "85"
             landmarkName = "loadImagesFromFlickr()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Virtual Tourist/VirtualTouristService.swift"
+            timestampString = "562566361.843245"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
+            landmarkName = "downloadImageFromPhoto(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

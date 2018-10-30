@@ -17,8 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private static let segueDetailViewController = "segueDetailViewController"
     private static let modelName = "Virtual_Tourist"
     
-    var dataController = DataController(modelName: AppDelegate.modelName)
+    let dataController = DataController(modelName: AppDelegate.modelName)
 
+    
     // MARK: - Virtual Tourist Application
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         dataController.load()

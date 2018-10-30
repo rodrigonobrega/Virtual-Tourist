@@ -86,9 +86,9 @@ extension PhotoAlbumViewController: UICollectionViewDelegate, UICollectionViewDa
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! PhotoCollectionViewCell
         let photo = fetchedResultsController.object(at: indexPath)
-        DispatchQueue.main.async {
-            cell.updateCellWithPhoto(photo)
-        }
+        
+        cell.updateCellWithPhoto(photo)
+        
         return cell
     }
     
@@ -109,7 +109,7 @@ extension PhotoAlbumViewController : NSFetchedResultsControllerDelegate {
     fileprivate func setupFetchedResultsController() {
         
         let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "url_m", ascending: false)
+        let sortDescriptor = NSSortDescriptor(key: "title", ascending: false)
         fetchRequest.predicate = NSPredicate(format: "pin = %@", self.selectedPin)
         fetchRequest.sortDescriptors = [sortDescriptor]
         
@@ -133,14 +133,18 @@ extension PhotoAlbumViewController : NSFetchedResultsControllerDelegate {
             case .insert:
                 collectionView.insertItems(at: [newIndexPath!])
             case .update:
+                print("update")
                 collectionView.reloadItems(at: [indexPath!])
             case .delete:
                 collectionView.deleteItems(at: [indexPath!])
             default:
+                print("default")
                 break
             }
+//        print("type \(type)")
         }) { (success) in
             self.collectionView.isUserInteractionEnabled = true
+            self.collectionView.reloadData()
         }
         
     }
@@ -150,20 +154,12 @@ extension PhotoAlbumViewController : NSFetchedResultsControllerDelegate {
 extension PhotoAlbumViewController {
     
     func downloadImages() {
+        
         if let photos = self.fetchedResultsController!.fetchedObjects {
             
+            let service = VirtualTouristService.sharedInstance()
             for photo in photos {
-                let service = VirtualTouristService.sharedInstance()
-                if let urlString = photo.url_m {
-                    
-                    service.downloadImageFromUrl(urlString: urlString) { (success, data) in
-                        self.dataController.viewContext.perform {
-                            photo.setValue(data, forKey: "binaryPhoto")
-                            try? self.dataController.viewContext.save()
-                        }
-                    }
-                    
-                }
+                service.downloadImageFromPhoto(photo)
             }
         }
     }
@@ -172,7 +168,11 @@ extension PhotoAlbumViewController {
         if let photos = fetchedResultsController!.fetchedObjects {
             for photo in photos {
                 dataController.viewContext.delete(photo)
-                try? dataController.viewContext.save()
+                do {
+                    try dataController.viewContext.save()
+                } catch {
+                    print("eeeeerrrroooooo")
+                }
             }
         }
         loadImagesFromFlickr()

@@ -74,13 +74,67 @@ class VirtualTouristService {
     }
     
     func downloadImageFromUrl(urlString: String, completion: @escaping (_ success: Bool, _ data: Data?) -> Void) {
-        URLSession.shared.dataTask(with: NSURL(string: urlString)! as URL, completionHandler: { (data, response, error) -> Void in
+    
+        let urlRequest = URLRequest(url: URL(string: urlString)!)
+        
+
+        print("############ Start \(urlString)")
+        URLSession.shared.dataTask(with: urlRequest , completionHandler: { (data, response, error) -> Void in
             if let data = data {
+                print("############ Downloaded \(urlString)")
                 completion(true, data)
             } else {
+                
+                print("############ ERRRORORORORORORORRO =============########")
                 completion(false, nil)
             }
         }).resume()
+    }
+    
+    func downloadImageFromPhoto(_ photo:Photo) {
+        if let urlString = photo.url_m {
+            //DispatchQueue.global(qos: .userInitiated).async {
+                
+                URLSession.shared.dataTask(with: URL(string: urlString)!) { (data, response, error) in
+                    if error == nil {
+                        
+                        DispatchQueue.main.async {
+                            photo.binaryPhoto = data
+                            try? photo.managedObjectContext?.save()
+                        }
+                        
+                    }
+                    
+              //  }
+                
+                
+            }.resume()
+            //}
+        }
+        
+    }
+        
+    func downloadImageFromPhotoolde(_ photo:Photo) {
+        if let urlString = photo.url_m {
+            
+            let urlRequest = URLRequest(url: URL(string: urlString)!)
+            
+            
+            
+            URLSession.shared.dataTask(with: urlRequest , completionHandler: { (data, response, error) -> Void in
+                if let data = data {
+                    photo.setValue(data, forKey: "binaryPhoto")
+        
+                    try? photo.managedObjectContext?.save()
+                } else {
+                    
+                    print("############ ERRRORORORORORORORRO =============########")
+                    
+                }
+            }).resume()
+        } else {
+            print("------------------------nunca")
+        }
     }
     
     //save current user location
